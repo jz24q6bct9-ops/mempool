@@ -16,6 +16,19 @@ Most people should use a <a href="#one-click-installation">one-click install met
 
 Other install methods are meant for developers and others with experience managing servers. If you want support for your own production instance of Mempool, or if you'd like to have your own instance of Mempool run by the mempool.space team on their own global ISP infrastructure—check out <a href="https://mempool.space/enterprise" target="_blank">Mempool Enterprise®</a>.
 
+### Need Help Connecting Components?
+
+If you need help connecting Bitcoin Core (txindex), Electrum Server for address lookups, your Bitcoin nodes, or configuring API keys, see our:
+- **[Complete Setup Guide](./SETUP_GUIDE.md)** - Comprehensive walkthrough with detailed explanations
+- **[Quick Reference Card](./QUICK_REFERENCE.md)** - Essential configuration snippets and commands
+
+The guides cover:
+- Enabling txindex in Bitcoin Core
+- Setting up Electrum Server for block and address lookups
+- Configuring node RPC connections
+- Adding API keys for fiat price data
+- Complete troubleshooting guide
+
 <a id="one-click-installation"></a>
 ## One-Click Installation
 
@@ -33,6 +46,7 @@ Mempool can be conveniently installed on the following full-node distros:
 
 Mempool can be installed in other ways too, but we only recommend doing so if you're a developer, have experience managing servers, or otherwise know what you're doing.
 
+- **[See the Complete Setup Guide](./SETUP_GUIDE.md)** - Comprehensive walkthrough for connecting Bitcoin Core (txindex), Electrum Server, database, nodes, and API keys.
 - See the [`docker/`](./docker/) directory for instructions on deploying Mempool with Docker.
 - See the [`backend/`](./backend/) and [`frontend/`](./frontend/) directories for manual install instructions oriented for developers.
 - See the [`production/`](./production/) directory for guidance on setting up a more serious Mempool instance designed for high performance at scale.
