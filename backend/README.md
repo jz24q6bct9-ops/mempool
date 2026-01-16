@@ -4,6 +4,8 @@ These instructions are mostly intended for developers.
 
 If you choose to use these instructions for a production setup, be aware that you will still probably need to do additional configuration for your specific OS, environment, use-case, etc. We do our best here to provide a good starting point, but only proceed if you know what you're doing. Mempool only provides support for custom setups to project sponsors through [Mempool Enterprise®](https://mempool.space/enterprise).
 
+**Need help connecting all the components?** See our **[Complete Setup Guide](../SETUP_GUIDE.md)** for detailed instructions on connecting Bitcoin Core (txindex), Electrum Server, nodes, and API keys.
+
 See other ways to set up Mempool on [the main README](/../../#installation-methods).
 
 Jump to a section in this doc:
