@@ -18,7 +18,11 @@ Other install methods are meant for developers and others with experience managi
 
 ### Need Help Connecting Components?
 
-If you need help connecting Bitcoin Core (txindex), Electrum Server for address lookups, your Bitcoin nodes, or configuring API keys, see our **[Complete Setup Guide](./SETUP_GUIDE.md)** which covers:
+If you need help connecting Bitcoin Core (txindex), Electrum Server for address lookups, your Bitcoin nodes, or configuring API keys, see our:
+- **[Complete Setup Guide](./SETUP_GUIDE.md)** - Comprehensive walkthrough with detailed explanations
+- **[Quick Reference Card](./QUICK_REFERENCE.md)** - Essential configuration snippets and commands
+
+The guides cover:
 - Enabling txindex in Bitcoin Core
 - Setting up Electrum Server for block and address lookups
 - Configuring node RPC connections

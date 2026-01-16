@@ -2,6 +2,8 @@
 
 This guide walks you through connecting all the essential components to run your own Mempool instance, including Bitcoin Core (with txindex), Electrum Server for address lookups, node RPC connections, and API keys.
 
+**TL;DR?** Check out the [Quick Reference Card](./QUICK_REFERENCE.md) for essential config snippets and commands.
+
 ## Table of Contents
 
 1. [Prerequisites](#prerequisites)
