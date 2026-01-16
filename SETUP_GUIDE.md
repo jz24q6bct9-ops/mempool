@@ -93,8 +93,22 @@ Mempool requires an Electrum Server to perform address lookups. Without it, addr
 Pick one of these options:
 
 1. **[romanz/electrs](https://github.com/romanz/electrs)** - Original implementation, resource-efficient
+   - Memory: ~4GB RAM during sync, ~2GB RAM ongoing
+   - Disk: ~40GB for index
+   - Sync time: 12-24 hours on modern hardware
+   - Best for: Home users, smaller deployments
+
 2. **[cculianu/Fulcrum](https://github.com/cculianu/Fulcrum)** - Fast and performant
+   - Memory: ~8GB RAM during sync, ~4GB RAM ongoing
+   - Disk: ~50GB for index
+   - Sync time: 6-12 hours on modern hardware
+   - Best for: Production use, high-traffic instances
+
 3. **[mempool/electrs](https://github.com/mempool/electrs)** - Mempool's fork with additional features (recommended for production)
+   - Memory: ~16GB RAM during sync, ~8GB RAM ongoing
+   - Disk: ~100GB for index
+   - Sync time: 12-24 hours on modern hardware
+   - Best for: Production Mempool instances, feature-rich deployments
 
 ### Example: Setting up romanz/electrs
 
@@ -155,7 +169,12 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
-**Security Note:** Change the default password `'mempool'` to something more secure!
+> **⚠️ SECURITY WARNING:** Change the default password `'mempool'` to something more secure in production!
+> 
+> Example with a strong password:
+> ```sql
+> GRANT ALL PRIVILEGES ON mempool.* TO 'mempool'@'localhost' IDENTIFIED BY 'your-strong-password-here';
+> ```
 
 ## Mempool Backend Configuration
 
