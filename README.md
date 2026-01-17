@@ -36,3 +36,14 @@ Mempool can be installed in other ways too, but we only recommend doing so if yo
 - See the [`docker/`](./docker/) directory for instructions on deploying Mempool with Docker.
 - See the [`backend/`](./backend/) and [`frontend/`](./frontend/) directories for manual install instructions oriented for developers.
 - See the [`production/`](./production/) directory for guidance on setting up a more serious Mempool instance designed for high performance at scale.
+
+## Security
+
+Mempool provides a public API for blockchain data by default. If you're concerned about API access, rate limiting, or securing your instance:
+
+- **Read the [Security Policy](./SECURITY.md)** for comprehensive guidance on protecting your Mempool instance
+- **Enable rate limiting** to prevent API abuse - see [`production/nginx/README-SECURITY.md`](./production/nginx/README-SECURITY.md)
+- **Use a firewall or VPN** for private access to your instance
+- **Secure your API keys** - external API keys (like FreeCurrency) are used internally only and never exposed
+
+**Important**: Your FreeCurrency API key and other secrets in `mempool-config.json` are safe - they're used only for outbound requests and never exposed in API responses.
