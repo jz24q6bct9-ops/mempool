@@ -49,6 +49,7 @@ import aboutRoutes from './api/about.routes';
 import mempoolBlocks from './api/mempool-blocks';
 import walletApi from './api/services/wallets';
 import stratumApi from './api/services/stratum';
+import healthRoutes from './api/health/health.routes';
 
 class Server {
   private wss: WebSocket.Server | undefined;
@@ -337,6 +338,7 @@ class Server {
   }
 
   setUpHttpApiRoutes(): void {
+    healthRoutes.initRoutes(this.app);
     bitcoinRoutes.initRoutes(this.app);
     if (config.MEMPOOL.OFFICIAL) {
       bitcoinCoreRoutes.initRoutes(this.app);

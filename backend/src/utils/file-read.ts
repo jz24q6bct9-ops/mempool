@@ -24,7 +24,7 @@ function extractDateFromLogLine(line: string): number | undefined {
 
   const dateStr = dateMatch[0];
   const date = new Date(dateStr);
-  let timestamp = Math.floor(date.getTime() / 1000); // Remove decimal (microseconds are added later)
+  const timestamp = Math.floor(date.getTime() / 1000); // Remove decimal (microseconds are added later)
 
   const timePart = dateStr.split('T')[1];
   const microseconds = timePart.split('.')[1] || '';
