@@ -1231,15 +1231,15 @@ class Blocks {
 
   /**
    * Get 15 blocks
-   * 
+   *
    * Internally this function uses two methods to get the blocks, and
    * the method is automatically selected:
    *  - Using previous block hash links
    *  - Using block height
-   * 
-   * @param fromHeight 
-   * @param limit 
-   * @returns 
+   *
+   * @param fromHeight
+   * @param limit
+   * @returns
    */
   public async $getBlocks(fromHeight?: number, limit: number = 15): Promise<BlockExtended[]> {
     let currentHeight = fromHeight !== undefined ? fromHeight : this.currentBlockHeight;
@@ -1271,9 +1271,9 @@ class Blocks {
 
   /**
    * Used for bulk block data query
-   * 
-   * @param fromHeight 
-   * @param toHeight 
+   *
+   * @param fromHeight
+   * @param toHeight
    */
   public async $getBlocksBetweenHeight(fromHeight: number, toHeight: number): Promise<any> {
     if (!Common.indexingEnabled()) {

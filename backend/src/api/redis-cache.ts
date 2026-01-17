@@ -420,6 +420,10 @@ class RedisCache {
   public setIgnoreBlocksCache(): void {
     this.ignoreBlocksCache = true;
   }
+
+  public isConnected(): boolean {
+    return this.connected;
+  }
 }
 
 export default new RedisCache();

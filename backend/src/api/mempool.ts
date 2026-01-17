@@ -39,7 +39,7 @@ class Mempool {
   private mempoolProtection = 0;
   private latestTransactions: any[] = [];
 
-  private ESPLORA_MISSING_TX_WARNING_THRESHOLD = 100; 
+  private ESPLORA_MISSING_TX_WARNING_THRESHOLD = 100;
   private SAMPLE_TIME = 10000; // In ms
   private timer = new Date().getTime();
   private missingTxCount = 0;
