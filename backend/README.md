@@ -9,6 +9,24 @@ See other ways to set up Mempool on [the main README](/../../#installation-metho
 Jump to a section in this doc:
 - [Set Up the Backend](#setup)
 - [Development Tips](#development-tips)
+- [Health Check API](#health-check-api)
+
+## Health Check API
+
+The backend includes health check and security validation endpoints to verify connectivity and configuration. After starting the backend, you can test your setup:
+
+```bash
+# Test all backend connections
+curl http://localhost:8999/api/v1/health/connections
+
+# Check security configuration
+curl http://localhost:8999/api/v1/health/security
+
+# Get full health report
+curl http://localhost:8999/api/v1/health/full
+```
+
+See [HEALTH_API.md](./HEALTH_API.md) for complete documentation.
 
 ## Setup
 

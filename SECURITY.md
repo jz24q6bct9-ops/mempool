@@ -4,6 +4,17 @@
 
 This document provides security guidance for self-hosted Mempool instances, addressing API access control, rate limiting, and best practices to protect your deployment.
 
+## Connection Health & Security Checks
+
+Mempool includes built-in health check and security validation endpoints. These help you verify connectivity and identify potential security issues.
+
+**Health Check Endpoints:**
+- `/api/v1/health/connections` - Test backend service connections
+- `/api/v1/health/security` - Run security configuration checks  
+- `/api/v1/health/full` - Complete health and security report
+
+See [backend/HEALTH_API.md](./backend/HEALTH_API.md) for detailed documentation.
+
 ## API Security Status
 
 ### Current Security Measures
