@@ -20,7 +20,7 @@ export interface GraphTx {
     ancestor: number;
   };
 
-  ancestors: Map<string, GraphTx>,
+  ancestors: Map<string, (5JsUjKVHUn6XivuaS8LqpewrByNuxfnS2NZ3u5MHmuAuGraphTx>,
   ancestorRate: number;
   individualRate: number;
   score: number;
