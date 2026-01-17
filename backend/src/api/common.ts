@@ -61,23 +61,23 @@ export class Common {
     const filtered: TransactionExtended[] = [];
     let lastValidRate = Infinity;
     // filter out anomalous fee rates to ensure monotonic range
-    for (const tx of transactions) {
-      if (tx.effectiveFeePerVsize <= lastValidRate) {
-        filtered.push(tx);
-        lastValidRate = tx.effectiveFeePerVsize;
+    for (const transaction of transactions) {
+      if (transaction.effectiveFeePerVsize <= lastValidRate) {
+        filtered.push(transaction);
+        lastValidRate = transaction.effectiveFeePerVsize;
       }
     }
-    const arr = [filtered[filtered.length - 1].effectiveFeePerVsize];
+    const feeRates = [filtered[filtered.length - 1].effectiveFeePerVsize];
     const chunk = 1 / (rangeLength - 1);
     let itemsToAdd = rangeLength - 2;
 
     while (itemsToAdd > 0) {
-      arr.push(filtered[Math.floor(filtered.length * chunk * itemsToAdd)].effectiveFeePerVsize);
+      feeRates.push(filtered[Math.floor(filtered.length * chunk * itemsToAdd)].effectiveFeePerVsize);
       itemsToAdd--;
     }
 
-    arr.push(filtered[0].effectiveFeePerVsize);
-    return arr;
+    feeRates.push(filtered[0].effectiveFeePerVsize);
+    return feeRates;
   }
 
   static findRbfTransactions(added: MempoolTransactionExtended[], deleted: MempoolTransactionExtended[], forceScalable = false): { [txid: string]: { replaced: MempoolTransactionExtended[], replacedBy: TransactionExtended }} {
@@ -102,19 +102,19 @@ export class Common {
     } else {
       // for large N, build a lookup table of prevouts we can check in ~constant time
       const deletedSpendMap: { [txid: string]: { [vout: number]: MempoolTransactionExtended } } = {};
-      for (const tx of deleted) {
-        for (const vin of tx.vin) {
-          if (!deletedSpendMap[vin.txid]) {
-            deletedSpendMap[vin.txid] = {};
+      for (const deletedTransaction of deleted) {
+        for (const transactionInput of deletedTransaction.vin) {
+          if (!deletedSpendMap[transactionInput.txid]) {
+            deletedSpendMap[transactionInput.txid] = {};
           }
-          deletedSpendMap[vin.txid][vin.vout] = tx;
+          deletedSpendMap[transactionInput.txid][transactionInput.vout] = deletedTransaction;
         }
       }
 
       for (const addedTx of added) {
         const foundMatches = new Set<MempoolTransactionExtended>();
-        for (const vin of addedTx.vin) {
-          const deletedTx = deletedSpendMap[vin.txid]?.[vin.vout];
+        for (const transactionInput of addedTx.vin) {
+          const deletedTx = deletedSpendMap[transactionInput.txid]?.[transactionInput.vout];
           if (deletedTx && deletedTx.txid !== addedTx.txid
               // The new tx must, absolutely speaking, pay at least as much fee as the replaced tx.
               && addedTx.fee > deletedTx.fee
@@ -135,25 +135,25 @@ export class Common {
 
   static findMinedRbfTransactions(minedTransactions: TransactionExtended[], spendMap: Map<string, MempoolTransactionExtended>): { [txid: string]: { replaced: MempoolTransactionExtended[], replacedBy: TransactionExtended }} {
     const matches: { [txid: string]: { replaced: MempoolTransactionExtended[], replacedBy: TransactionExtended }} = {};
-    for (const tx of minedTransactions) {
+    for (const minedTransaction of minedTransactions) {
       const replaced: Set<MempoolTransactionExtended> = new Set();
-      for (let i = 0; i < tx.vin.length; i++) {
-        const vin = tx.vin[i];
-        const key = `${vin.txid}:${vin.vout}`;
+      for (let i = 0; i < minedTransaction.vin.length; i++) {
+        const transactionInput = minedTransaction.vin[i];
+        const key = `${transactionInput.txid}:${transactionInput.vout}`;
         const match = spendMap.get(key);
-        if (match && match.txid !== tx.txid) {
+        if (match && match.txid !== minedTransaction.txid) {
           replaced.add(match);
           // remove this tx from the spendMap
           // prevents the same tx being replaced more than once
-          for (const replacedVin of match.vin) {
-            const replacedKey = `${replacedVin.txid}:${replacedVin.vout}`;
+          for (const replacedTransactionInput of match.vin) {
+            const replacedKey = `${replacedTransactionInput.txid}:${replacedTransactionInput.vout}`;
             spendMap.delete(replacedKey);
           }
         }
         spendMap.delete(key);
       }
       if (replaced.size) {
-        matches[tx.txid] = { replaced: Array.from(replaced), replacedBy: tx };
+        matches[minedTransaction.txid] = { replaced: Array.from(replaced), replacedBy: minedTransaction };
       }
     }
     return matches;
@@ -231,46 +231,46 @@ export class Common {
     }
 
     // input validation
-    for (const vin of tx.vin) {
-      if (vin.is_coinbase) {
+    for (const transactionInput of tx.vin) {
+      if (transactionInput.is_coinbase) {
         // standardness rules don't apply to coinbase transactions
         return false;
       }
       // scriptsig-size
-      if ((vin.scriptsig.length / 2) > MAX_STANDARD_SCRIPTSIG_SIZE) {
+      if ((transactionInput.scriptsig.length / 2) > MAX_STANDARD_SCRIPTSIG_SIZE) {
         return true;
       }
       // scriptsig-not-pushonly
-      if (vin.scriptsig_asm?.length) {
-        for (const op of vin.scriptsig_asm.split(' ')) {
+      if (transactionInput.scriptsig_asm?.length) {
+        for (const op of transactionInput.scriptsig_asm.split(' ')) {
           if (opcodes[op] && opcodes[op] > opcodes['OP_16']) {
             return true;
           }
         }
       }
       // bad-txns-nonstandard-inputs
-      if (vin.prevout?.scriptpubkey_type === 'p2sh') {
+      if (transactionInput.prevout?.scriptpubkey_type === 'p2sh') {
         // TODO: evaluate script (https://github.com/bitcoin/bitcoin/blob/1ac627c485a43e50a9a49baddce186ee3ad4daad/src/policy/policy.cpp#L177)
         // countScriptSigops returns the witness-scaled sigops, so divide by 4 before comparison with MAX_P2SH_SIGOPS
-        const sigops = (transactionUtils.countScriptSigops(vin.inner_redeemscript_asm) / 4);
+        const sigops = (transactionUtils.countScriptSigops(transactionInput.inner_redeemscript_asm) / 4);
         if (sigops > MAX_P2SH_SIGOPS) {
           return true;
         }
-      } else if (['unknown', 'provably_unspendable', 'empty'].includes(vin.prevout?.scriptpubkey_type || '')) {
+      } else if (['unknown', 'provably_unspendable', 'empty'].includes(transactionInput.prevout?.scriptpubkey_type || '')) {
         return true;
-      } else if (vin.prevout?.scriptpubkey_type === 'anchor' && this.isNonStandardAnchor(vin, height)) {
+      } else if (transactionInput.prevout?.scriptpubkey_type === 'anchor' && this.isNonStandardAnchor(transactionInput, height)) {
         return true;
       }
       // bad-witness-nonstandard
-      if (vin.prevout?.scriptpubkey_type === 'v1_p2tr' && vin.witness?.length) {
-        const hasAnnex = vin.witness.length > 1 && vin.witness[vin.witness.length - 1].startsWith('50');
+      if (transactionInput.prevout?.scriptpubkey_type === 'v1_p2tr' && transactionInput.witness?.length) {
+        const hasAnnex = transactionInput.witness.length > 1 && transactionInput.witness[transactionInput.witness.length - 1].startsWith('50');
         // annex is non-standard
         if (hasAnnex) {
           return true;
         }
-        if (vin.witness.length > (hasAnnex ? 2 : 1)) {
+        if (transactionInput.witness.length > (hasAnnex ? 2 : 1)) {
           // script path spend
-          const controlBlock = vin.witness[vin.witness.length - (hasAnnex ? 2 : 1)];
+          const controlBlock = transactionInput.witness[transactionInput.witness.length - (hasAnnex ? 2 : 1)];
           // control block is required
           if (!controlBlock.length) {
             return false;
@@ -281,7 +281,7 @@ export class Common {
             }
           }
           // remaining witness items (except for the script) must be within MAX_STANDARD_TAPSCRIPT_STACK_ITEM_SIZE limit
-          if (vin.witness.slice(0, vin.witness.length - (hasAnnex ? 3 : 2)).some(v => v.length > 160)) {
+          if (transactionInput.witness.slice(0, transactionInput.witness.length - (hasAnnex ? 3 : 2)).some(v => v.length > 160)) {
             return false;
           }
         }
@@ -292,45 +292,45 @@ export class Common {
     // output validation
     let opreturnCount = 0;
     let opreturnBytes = 0;
-    for (const vout of tx.vout) {
+    for (const transactionOutput of tx.vout) {
       // scriptpubkey
-      if (['nonstandard', 'provably_unspendable', 'empty'].includes(vout.scriptpubkey_type)) {
+      if (['nonstandard', 'provably_unspendable', 'empty'].includes(transactionOutput.scriptpubkey_type)) {
         // (non-standard output type)
         return true;
-      } else if (vout.scriptpubkey_type === 'unknown') {
+      } else if (transactionOutput.scriptpubkey_type === 'unknown') {
         // undefined segwit version/length combinations are actually standard in outputs
         // https://github.com/bitcoin/bitcoin/blob/2c79abc7ad4850e9e3ba32a04c530155cda7f980/src/script/interpreter.cpp#L1950-L1951
-        if (vout.scriptpubkey.startsWith('00') || !this.isWitnessProgram(vout.scriptpubkey)) {
+        if (transactionOutput.scriptpubkey.startsWith('00') || !this.isWitnessProgram(transactionOutput.scriptpubkey)) {
           return true;
         }
-      } else if (vout.scriptpubkey_type === 'multisig') {
+      } else if (transactionOutput.scriptpubkey_type === 'multisig') {
         if (!DEFAULT_PERMIT_BAREMULTISIG) {
           // bare-multisig
           return true;
         }
-        const mOfN = parseMultisigScript(vout.scriptpubkey_asm);
+        const mOfN = parseMultisigScript(transactionOutput.scriptpubkey_asm);
         if (!mOfN || mOfN.n < 1 || mOfN.n > 3 || mOfN.m < 1 || mOfN.m > mOfN.n) {
           // (non-standard bare multisig threshold)
           return true;
         }
-      } else if (vout.scriptpubkey_type === 'op_return') {
+      } else if (transactionOutput.scriptpubkey_type === 'op_return') {
         opreturnCount++;
-        opreturnBytes += vout.scriptpubkey.length / 2;
+        opreturnBytes += transactionOutput.scriptpubkey.length / 2;
       }
       // dust
       // (we could probably hardcode this for the different output types...)
-      if (vout.scriptpubkey_type !== 'op_return') {
-        let dustSize = (vout.scriptpubkey.length / 2);
+      if (transactionOutput.scriptpubkey_type !== 'op_return') {
+        let dustSize = (transactionOutput.scriptpubkey.length / 2);
         // add varint length overhead
         dustSize += getVarIntLength(dustSize);
         // add value size
         dustSize += 8;
-        if (Common.isWitnessProgram(vout.scriptpubkey)) {
+        if (Common.isWitnessProgram(transactionOutput.scriptpubkey)) {
           dustSize += 67;
         } else {
           dustSize += 148;
         }
-        if (vout.value < (dustSize * DUST_RELAY_TX_FEE)) {
+        if (transactionOutput.value < (dustSize * DUST_RELAY_TX_FEE)) {
           // under minimum output size
           return !Common.isStandardEphemeralDust(tx, height);
         }

@@ -61,12 +61,12 @@ interface MinerTransaction extends TemplateTransaction {
  * @param tx
  */
 export function getSameBlockRelatives(tx: MempoolTransactionExtended, transactions: MempoolTransactionExtended[]): Map<string, GraphTx> {
-  const blockTxs = new Map<string, MempoolTransactionExtended>(); // map of txs in this block
-  const spendMap = new Map<string, string>(); // map of outpoints to spending txids
-  for (const tx of transactions) {
-    blockTxs.set(tx.txid, tx);
-    for (const vin of tx.vin) {
-      spendMap.set(`${vin.txid}:${vin.vout}`, tx.txid);
+  const transactionsInBlock = new Map<string, MempoolTransactionExtended>(); // map of txs in this block
+  const outpointToSpendingTxidMap = new Map<string, string>(); // map of outpoints to spending txids
+  for (const transaction of transactions) {
+    transactionsInBlock.set(transaction.txid, transaction);
+    for (const transactionInput of transaction.vin) {
+      outpointToSpendingTxidMap.set(`${transactionInput.txid}:${transactionInput.vout}`, transaction.txid);
     }
   }
 
@@ -75,13 +75,13 @@ export function getSameBlockRelatives(tx: MempoolTransactionExtended, transactio
 
   // build set of same-block ancestors
   while (stack.length > 0) {
-    const nextTxid = stack.pop();
-    const nextTx = nextTxid ? blockTxs.get(nextTxid) : null;
-    if (!nextTx || relatives.has(nextTx.txid)) {
+    const currentTxid = stack.pop();
+    const currentTransaction = currentTxid ? transactionsInBlock.get(currentTxid) : null;
+    if (!currentTransaction || relatives.has(currentTransaction.txid)) {
       continue;
     }
 
-    const mempoolTx = convertToGraphTx(nextTx, spendMap);
+    const mempoolTx = convertToGraphTx(currentTransaction, outpointToSpendingTxidMap);
 
     for (const txid of [...mempoolTx.depends, ...mempoolTx.spentby]) {
       if (txid) {
@@ -110,8 +110,8 @@ export function convertToGraphTx(tx: MempoolTransactionExtended, spendMap?: Map<
       base: tx.fee || 0,
       ancestor: tx.fee || 0,
     },
-    depends: (tx.vin.map(vin => vin.txid).filter(depend => depend) as string[]),
-    spentby: spendMap ? (tx.vout.map((vout, index) => { const spend = spendMap.get(`${tx.txid}:${index}`); return (spend?.['txid'] || spend); }).filter(spent => spent) as string[]) : [],
+    depends: (tx.vin.map(transactionInput => transactionInput.txid).filter(depend => depend) as string[]),
+    spentby: spendMap ? (tx.vout.map((transactionOutput, index) => { const spend = spendMap.get(`${tx.txid}:${index}`); return (spend?.['txid'] || spend); }).filter(spent => spent) as string[]) : [],
 
     ancestorcount: 1,
     ancestorsize: Math.max(tx.sigops * 5, Math.ceil(tx.weight / 4)),
@@ -133,13 +133,13 @@ export function expandRelativesGraph(mempool: { [txid: string]: MempoolTransacti
       return relatives;
     }
 
-    const nextTx = stack.pop();
-    if (!nextTx) {
+    const currentTransaction = stack.pop();
+    if (!currentTransaction) {
       continue;
     }
-    relatives.set(nextTx.txid, nextTx);
+    relatives.set(currentTransaction.txid, currentTransaction);
 
-    for (const relativeTxid of [...nextTx.depends, ...nextTx.spentby]) {
+    for (const relativeTxid of [...currentTransaction.depends, ...currentTransaction.spentby]) {
       if (relatives.has(relativeTxid)) {
         // already processed this tx
         continue;
