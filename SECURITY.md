@@ -18,7 +18,7 @@ The Mempool API is designed as a **public blockchain explorer API** by default. 
 #### 2. CORS Configuration
 - **Default**: Allows all origins (`Access-Control-Allow-Origin: *`)
 - **Purpose**: Enables public blockchain data access from web browsers
-- **Location**: `backend/src/index.ts` lines 132-137
+- **Location**: `backend/src/index.ts` (in the startServer method)
 
 #### 3. External API Keys
 - **FreeCurrency API Key**: Used internally to fetch fiat exchange rates

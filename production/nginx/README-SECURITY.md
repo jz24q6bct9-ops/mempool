@@ -100,8 +100,8 @@ Edit `http-rate-limit.conf` to adjust the rate limits:
 # Example: Increase general API limit to 20 req/s
 limit_req_zone $binary_remote_addr zone=api_general:10m rate=20r/s;
 
-# Example: Decrease expensive operations to 0.5 req/s
-limit_req_zone $binary_remote_addr zone=api_expensive:10m rate=500ms;
+# Example: Decrease expensive operations to 0.5 req/s (30 requests per minute)
+limit_req_zone $binary_remote_addr zone=api_expensive:10m rate=30r/m;
 ```
 
 ### Burst Configuration
