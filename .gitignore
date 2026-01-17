@@ -3,6 +3,7 @@ data
 docker-compose.yml
 backend/mempool-config.json
 *.swp
+.vscode/
 frontend/src/resources/config.template.js
 frontend/src/resources/config.js
 target
