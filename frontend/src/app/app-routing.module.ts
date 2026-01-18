@@ -7,6 +7,7 @@ import { MempoolBlockViewComponent } from '@components/mempool-block-view/mempoo
 import { ClockComponent } from '@components/clock/clock.component';
 import { StatusViewComponent } from '@components/status-view/status-view.component';
 import { AddressGroupComponent } from '@components/address-group/address-group.component';
+import { SolanaWalletComponent } from '@components/solana-wallet/solana-wallet.component';
 import { TrackerGuard } from '@app/route-guards';
 
 const browserWindow = window || {};
@@ -202,6 +203,10 @@ let routes: Routes = [
   {
     path: 'view/blocks',
     component: EightBlocksComponent,
+  },
+  {
+    path: 'solana',
+    component: SolanaWalletComponent,
   },
   {
     path: 'status',
