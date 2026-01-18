@@ -1,0 +1,138 @@
+.solana-wallet-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+
+  h2 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  .wallet-section {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .connected-wallet {
+    .wallet-info {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid #dee2e6;
+
+      h4 {
+        margin-bottom: 15px;
+        color: #28a745;
+      }
+
+      .wallet-address,
+      .wallet-balance {
+        margin-bottom: 10px;
+        word-break: break-all;
+
+        code {
+          background: #e9ecef;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 0.9em;
+        }
+      }
+    }
+  }
+
+  .signing-section,
+  .transaction-section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #dee2e6;
+
+    h4 {
+      margin-bottom: 15px;
+      color: #007bff;
+    }
+
+    p {
+      color: #6c757d;
+      margin-bottom: 15px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+
+      label {
+        font-weight: 600;
+        margin-bottom: 5px;
+        display: block;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+      }
+    }
+  }
+
+  .signed-message-result,
+  .transaction-result {
+    .signature-details {
+      margin-top: 10px;
+
+      .signature-text {
+        display: block;
+        word-break: break-all;
+        background: #f8f9fa;
+        padding: 8px;
+        border-radius: 4px;
+        margin-top: 5px;
+      }
+    }
+  }
+
+  .verification-result {
+    margin-top: 15px;
+  }
+
+  .loading-indicator {
+    text-align: center;
+    padding: 20px;
+  }
+
+  .btn {
+    margin-right: 10px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  .alert {
+    margin-bottom: 20px;
+
+    .close {
+      cursor: pointer;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 10px;
+
+    .wallet-section,
+    .signing-section,
+    .transaction-section {
+      padding: 15px;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+    }
+
+    h4 {
+      font-size: 1.2rem;
+    }
+  }
+}

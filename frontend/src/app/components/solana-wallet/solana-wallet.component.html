@@ -1,0 +1,188 @@
+<div class="solana-wallet-container">
+  <h2 i18n="@@solana-wallet.title">Solana Wallet</h2>
+
+  <!-- Wallet Installation Check -->
+  <div *ngIf="!isWalletInstalled" class="alert alert-warning">
+    <h4 i18n="@@solana-wallet.no-wallet-title">No Solana Wallet Detected</h4>
+    <p i18n="@@solana-wallet.no-wallet-message">
+      Please install a Solana wallet extension (e.g., Phantom, Solflare) to use this feature.
+    </p>
+    <a href="https://phantom.app/" target="_blank" class="btn btn-primary" i18n="@@solana-wallet.install-phantom">
+      Install Phantom Wallet
+    </a>
+  </div>
+
+  <!-- Wallet Connection -->
+  <div *ngIf="isWalletInstalled" class="wallet-section">
+    <div *ngIf="!isConnected">
+      <button 
+        class="btn btn-primary btn-lg" 
+        (click)="connectWallet()" 
+        [disabled]="isLoading"
+        i18n="@@solana-wallet.connect-button">
+        {{ isLoading ? 'Connecting...' : 'Connect Wallet' }}
+      </button>
+    </div>
+
+    <div *ngIf="isConnected" class="connected-wallet">
+      <div class="wallet-info">
+        <h4 i18n="@@solana-wallet.connected-title">Connected Wallet</h4>
+        <div class="wallet-address">
+          <strong i18n="@@solana-wallet.address-label">Address:</strong>
+          <code>{{ walletAddress }}</code>
+        </div>
+        <div class="wallet-balance">
+          <strong i18n="@@solana-wallet.balance-label">Balance:</strong>
+          <span>{{ balance | number:'1.4-4' }} SOL</span>
+          <button class="btn btn-sm btn-secondary ml-2" (click)="loadBalance()" [disabled]="isLoading">
+            <i class="fa fa-refresh"></i>
+          </button>
+        </div>
+        <button 
+          class="btn btn-danger mt-2" 
+          (click)="disconnectWallet()"
+          i18n="@@solana-wallet.disconnect-button">
+          Disconnect Wallet
+        </button>
+      </div>
+
+      <!-- Message Signing Section -->
+      <div class="signing-section mt-4">
+        <h4 i18n="@@solana-wallet.sign-message-title">Sign Message</h4>
+        <p i18n="@@solana-wallet.sign-message-description">
+          Sign a message with your Solana wallet to prove ownership of your address.
+        </p>
+        
+        <div class="form-group">
+          <label for="message" i18n="@@solana-wallet.message-label">Message to Sign:</label>
+          <textarea 
+            id="message"
+            class="form-control" 
+            [(ngModel)]="message" 
+            rows="3"
+            placeholder="Enter your message here..."
+            i18n-placeholder="@@solana-wallet.message-placeholder">
+          </textarea>
+        </div>
+
+        <button 
+          class="btn btn-primary" 
+          (click)="signMessage()" 
+          [disabled]="!message || isLoading"
+          i18n="@@solana-wallet.sign-button">
+          Sign Message
+        </button>
+
+        <!-- Signed Message Display -->
+        <div *ngIf="signedMessage" class="signed-message-result mt-3">
+          <div class="alert alert-success">
+            <h5 i18n="@@solana-wallet.signature-title">Message Signed Successfully!</h5>
+            <div class="signature-details">
+              <div>
+                <strong i18n="@@solana-wallet.signature-label">Signature:</strong>
+                <code class="signature-text">{{ signedMessage.signature }}</code>
+              </div>
+              <div class="mt-2">
+                <strong i18n="@@solana-wallet.public-key-label">Public Key:</strong>
+                <code>{{ signedMessage.publicKey }}</code>
+              </div>
+            </div>
+            <button class="btn btn-sm btn-secondary mt-2" (click)="clearSignature()" i18n="@@solana-wallet.clear-button">
+              Clear
+            </button>
+          </div>
+
+          <!-- Verification Result -->
+          <div *ngIf="verificationResult" class="verification-result">
+            <div [class]="verificationResult.valid ? 'alert alert-success' : 'alert alert-danger'">
+              <h5 i18n="@@solana-wallet.verification-title">Verification Result</h5>
+              <p>
+                <strong i18n="@@solana-wallet.verification-status">Status:</strong>
+                <span *ngIf="verificationResult.valid" i18n="@@solana-wallet.verification-valid">✓ Valid Signature</span>
+                <span *ngIf="!verificationResult.valid" i18n="@@solana-wallet.verification-invalid">✗ Invalid Signature</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transaction Section -->
+      <div class="transaction-section mt-4">
+        <h4 i18n="@@solana-wallet.send-transaction-title">Send SOL</h4>
+        <p i18n="@@solana-wallet.send-transaction-description">
+          Send SOL to another Solana address.
+        </p>
+
+        <div class="form-group">
+          <label for="recipient" i18n="@@solana-wallet.recipient-label">Recipient Address:</label>
+          <input 
+            id="recipient"
+            type="text" 
+            class="form-control" 
+            [(ngModel)]="recipientAddress" 
+            placeholder="Enter Solana address..."
+            i18n-placeholder="@@solana-wallet.recipient-placeholder">
+        </div>
+
+        <div class="form-group">
+          <label for="amount" i18n="@@solana-wallet.amount-label">Amount (SOL):</label>
+          <input 
+            id="amount"
+            type="number" 
+            class="form-control" 
+            [(ngModel)]="transferAmount" 
+            min="0" 
+            step="0.01"
+            placeholder="0.00"
+            i18n-placeholder="@@solana-wallet.amount-placeholder">
+        </div>
+
+        <button 
+          class="btn btn-primary" 
+          (click)="sendTransaction()" 
+          [disabled]="!recipientAddress || transferAmount <= 0 || isLoading"
+          i18n="@@solana-wallet.send-button">
+          {{ isLoading ? 'Sending...' : 'Send Transaction' }}
+        </button>
+
+        <!-- Transaction Result -->
+        <div *ngIf="transactionSignature" class="transaction-result mt-3">
+          <div class="alert alert-success">
+            <h5 i18n="@@solana-wallet.transaction-success-title">Transaction Sent Successfully!</h5>
+            <div>
+              <strong i18n="@@solana-wallet.transaction-signature-label">Transaction Signature:</strong>
+              <code>{{ transactionSignature }}</code>
+            </div>
+            <div class="mt-2">
+              <a 
+                [href]="'https://explorer.solana.com/tx/' + transactionSignature + '?cluster=devnet'" 
+                target="_blank" 
+                class="btn btn-sm btn-info"
+                i18n="@@solana-wallet.view-explorer-button">
+                View on Solana Explorer
+              </a>
+              <button class="btn btn-sm btn-secondary ml-2" (click)="clearTransaction()" i18n="@@solana-wallet.clear-button">
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Display -->
+  <div *ngIf="error" class="alert alert-danger mt-3">
+    <strong i18n="@@solana-wallet.error-title">Error:</strong> {{ error }}
+    <button type="button" class="close" (click)="clearError()">
+      <span>&times;</span>
+    </button>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading" class="loading-indicator">
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only" i18n="@@solana-wallet.loading">Loading...</span>
+    </div>
+  </div>
+</div>

@@ -132,6 +132,8 @@ import { BitcoinInvoiceComponent } from '@components/bitcoin-invoice/bitcoin-inv
 
 import { OnlyVsizeDirective, OnlyWeightDirective } from '@app/shared/components/weight-directives/weight-directives';
 import { GithubLogin } from '@components/github-login.component/github-login.component';
+import { SolanaWalletComponent } from '@components/solana-wallet/solana-wallet.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -256,11 +258,13 @@ import { GithubLogin } from '@components/github-login.component/github-login.com
     TwitterLogin,
     GithubLogin,
     BitcoinInvoiceComponent,
+    SolanaWalletComponent,
   ],
   imports: [
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
+    FormsModule,
     NgbNavModule,
     NgbTooltipModule,
     NgbPaginationModule,
@@ -396,6 +400,7 @@ import { GithubLogin } from '@components/github-login.component/github-login.com
     TwitterLogin,
     GithubLogin,
     BitcoinInvoiceComponent,
+    SolanaWalletComponent,
     BitcoinsatoshisPipe,
 
     MempoolBlockOverviewComponent,
