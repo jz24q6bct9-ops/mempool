@@ -29,6 +29,7 @@ import { ShortenStringPipe } from '@app/shared/pipes/shorten-string-pipe/shorten
 import { CapAddressPipe } from '@app/shared/pipes/cap-address-pipe/cap-address-pipe';
 import { AppPreloadingStrategy } from '@app/app.preloading-strategy';
 import { ServicesApiServices } from '@app/services/services-api.service';
+import { SolanaWalletService } from '@app/services/solana-wallet.service';
 import { DatePipe } from '@angular/common';
 
 const providers = [
@@ -52,6 +53,7 @@ const providers = [
   CapAddressPipe,
   AppPreloadingStrategy,
   ServicesApiServices,
+  SolanaWalletService,
   PreloadService,
   { provide: HTTP_INTERCEPTORS, useClass: HttpCacheInterceptor, multi: true },
   { provide: ZONE_SERVICE, useClass: ZoneService },
