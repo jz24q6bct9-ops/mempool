@@ -170,6 +170,10 @@ interface IConfig {
   STRATUM: {
     ENABLED: boolean;
     API: string;
+  },
+  SOLANA: {
+    ENABLED: boolean;
+    RPC_URL: string;
   }
 }
 
@@ -341,6 +345,10 @@ const defaults: IConfig = {
   'STRATUM': {
     'ENABLED': false,
     'API': 'http://localhost:1234',
+  },
+  'SOLANA': {
+    'ENABLED': true,
+    'RPC_URL': 'https://api.mainnet-beta.solana.com',
   }
 };
 
@@ -365,6 +373,7 @@ class Config implements IConfig {
   FIAT_PRICE: IConfig['FIAT_PRICE'];
   WALLETS: IConfig['WALLETS'];
   STRATUM: IConfig['STRATUM'];
+  SOLANA: IConfig['SOLANA'];
 
   constructor() {
     const configs = this.merge(configFromFile, defaults);
@@ -388,6 +397,7 @@ class Config implements IConfig {
     this.FIAT_PRICE = configs.FIAT_PRICE;
     this.WALLETS = configs.WALLETS;
     this.STRATUM = configs.STRATUM;
+    this.SOLANA = configs.SOLANA;
   }
 
   merge = (...objects: object[]): IConfig => {

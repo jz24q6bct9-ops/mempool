@@ -209,6 +209,10 @@ let routes: Routes = [
     component: StatusViewComponent
   },
   {
+    path: 'solana',
+    loadChildren: () => import('@app/solana/solana.module').then(m => m.SolanaModule),
+  },
+  {
     path: '',
     loadChildren: () => import('@app/bitcoin-graphs.module').then(m => m.BitcoinGraphsModule),
     data: { preload: true },

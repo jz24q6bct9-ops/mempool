@@ -8,6 +8,39 @@ Mempool is the fully-featured mempool visualizer, explorer, and API service runn
 
 It is an open-source project developed and operated for the benefit of the Bitcoin community, with a focus on the emerging transaction fee market that is evolving Bitcoin into a multi-layer ecosystem.
 
+## New: Solana Blockchain Support
+
+This fork adds **Solana blockchain support** to the Mempool explorer, enabling users to:
+
+- **Track Solana wallets** and view real-time balance information
+- **View transaction history** with detailed on-chain proof
+- **Monitor SPL token holdings** and token account details
+- **Analyze transaction fees** to understand real costs
+- **Detect liquidity pool positions** (Raydium, Orca, etc.)
+- **Get clear explanations** about token receipt issues
+
+### Using Solana Features
+
+Access Solana wallet tracking at: `/solana/wallet/{wallet_address}`
+
+Example: `/solana/wallet/7eZtWvAq38EioSGmwP5VPVbE5va5jWmj1wZcfkxmStBZ`
+
+### Configuring Solana RPC
+
+Add to your `mempool-config.json`:
+
+```json
+"SOLANA": {
+  "ENABLED": true,
+  "RPC_URL": "https://api.mainnet-beta.solana.com"
+}
+```
+
+You can use any Solana RPC endpoint, including:
+- Public endpoints: `https://api.mainnet-beta.solana.com`
+- Private/paid RPC services (recommended for production)
+- Self-hosted Solana validators
+
 # Installation Methods
 
 Mempool can be self-hosted on a wide variety of your own hardware, ranging from a simple one-click installation on a Raspberry Pi full-node distro all the way to a robust production instance on a powerful FreeBSD server. 

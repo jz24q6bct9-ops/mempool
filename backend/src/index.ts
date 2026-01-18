@@ -49,6 +49,7 @@ import aboutRoutes from './api/about.routes';
 import mempoolBlocks from './api/mempool-blocks';
 import walletApi from './api/services/wallets';
 import stratumApi from './api/services/stratum';
+import SolanaRoutes from './api/solana/solana.routes';
 
 class Server {
   private wss: WebSocket.Server | undefined;
@@ -371,6 +372,9 @@ class Server {
     if (!config.MEMPOOL.OFFICIAL) {
       aboutRoutes.initRoutes(this.app);
     }
+    // Initialize Solana routes
+    const solanaRoutes = new SolanaRoutes();
+    solanaRoutes.initRoutes(this.app);
   }
 
   healthCheck(): void {
