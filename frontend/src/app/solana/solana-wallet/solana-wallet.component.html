@@ -1,0 +1,178 @@
+<div class="container-xl" *ngIf="!isLoading && !error && walletSummary">
+  <div class="title-block">
+    <h1>Solana Wallet</h1>
+    <div class="wallet-address">
+      <small>{{ walletAddress }}</small>
+    </div>
+  </div>
+
+  <!-- Balance Overview -->
+  <div class="box">
+    <h2>Balance Overview</h2>
+    <div class="balance-grid">
+      <div class="balance-item">
+        <div class="label">SOL Balance</div>
+        <div class="value">{{ walletSummary.wallet.balance.toFixed(4) }} SOL</div>
+      </div>
+      <div class="balance-item">
+        <div class="label">Token Accounts</div>
+        <div class="value">{{ walletSummary.wallet.tokenAccounts.length }}</div>
+      </div>
+      <div class="balance-item">
+        <div class="label">Total Transactions</div>
+        <div class="value">{{ walletSummary.statistics.totalTransactions }}</div>
+      </div>
+      <div class="balance-item">
+        <div class="label">Success Rate</div>
+        <div class="value">{{ walletSummary.statistics.successRate.toFixed(1) }}%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fee Analysis -->
+  <div class="box">
+    <h2>Fee Analysis</h2>
+    <div class="fee-grid">
+      <div class="fee-item">
+        <div class="label">Total Fees Paid</div>
+        <div class="value">{{ walletSummary.fees.total.toFixed(6) }} SOL</div>
+      </div>
+      <div class="fee-item">
+        <div class="label">Transaction Count</div>
+        <div class="value">{{ walletSummary.fees.count }}</div>
+      </div>
+      <div class="fee-item">
+        <div class="label">Average Fee</div>
+        <div class="value">{{ walletSummary.fees.average.toFixed(6) }} SOL</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Token Holdings -->
+  <div class="box" *ngIf="walletSummary.wallet.tokenAccounts.length > 0">
+    <h2>Token Holdings (SPL Tokens)</h2>
+    <div class="table-responsive">
+      <table class="table table-borderless">
+        <thead>
+          <tr>
+            <th>Mint Address</th>
+            <th>Amount</th>
+            <th>Decimals</th>
+            <th>UI Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let token of walletSummary.wallet.tokenAccounts">
+            <td><code class="addr">{{ token.mint.substring(0, 20) }}...</code></td>
+            <td>{{ token.amount }}</td>
+            <td>{{ token.decimals }}</td>
+            <td>{{ token.uiAmount || 0 }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recent Transactions -->
+  <div class="box">
+    <h2>Recent Transactions</h2>
+    <div class="table-responsive">
+      <table class="table table-borderless">
+        <thead>
+          <tr>
+            <th>Signature</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Slot</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tx of walletSummary.wallet.transactions" [class]="getStatusClass(tx)">
+            <td><code class="addr">{{ tx.signature.substring(0, 20) }}...</code></td>
+            <td>{{ formatTimestamp(tx.blockTime) }}</td>
+            <td>
+              <span *ngIf="!tx.err" class="badge badge-success">Success</span>
+              <span *ngIf="tx.err" class="badge badge-danger">Failed</span>
+            </td>
+            <td>{{ tx.slot }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Liquidity Pools -->
+  <div class="box" *ngIf="walletSummary.liquidityPools.length > 0">
+    <h2>Liquidity Pool Positions</h2>
+    <div class="table-responsive">
+      <table class="table table-borderless">
+        <thead>
+          <tr>
+            <th>Pool Address</th>
+            <th>Protocol</th>
+            <th>Token A</th>
+            <th>Token B</th>
+            <th>LP Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let pool of walletSummary.liquidityPools">
+            <td><code class="addr">{{ pool.poolAddress.substring(0, 20) }}...</code></td>
+            <td>{{ pool.protocol }}</td>
+            <td>{{ pool.tokenA.symbol || pool.tokenA.mint.substring(0, 10) }}...</td>
+            <td>{{ pool.tokenB.symbol || pool.tokenB.mint.substring(0, 10) }}...</td>
+            <td>{{ pool.lpTokenAmount }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Key Insights -->
+  <div class="box">
+    <h2>Key Insights</h2>
+    <div class="insights">
+      <div class="insight-item">
+        <strong>Why you might not receive tokens:</strong>
+        <ul>
+          <li *ngIf="walletSummary.statistics.failedTransactions > 0">
+            You have {{ walletSummary.statistics.failedTransactions }} failed transactions - these don't transfer tokens
+          </li>
+          <li *ngIf="walletSummary.fees.total > 0">
+            Total fees paid: {{ walletSummary.fees.total.toFixed(6) }} SOL - fees are deducted from your balance
+          </li>
+          <li>Check that the sender's transaction actually succeeded (not just initiated)</li>
+          <li>Verify the correct wallet address was used by the sender</li>
+          <li>Some tokens require associated token accounts to be created first</li>
+        </ul>
+      </div>
+      <div class="insight-item">
+        <strong>On-chain proof:</strong>
+        <p>All transactions shown above are verified on-chain. You can verify any transaction signature on Solana Explorer.</p>
+      </div>
+      <div class="insight-item">
+        <strong>Real profit calculation:</strong>
+        <p>
+          Current SOL: {{ walletSummary.wallet.balance.toFixed(4) }} SOL<br>
+          Minus fees paid: {{ walletSummary.fees.total.toFixed(6) }} SOL<br>
+          Plus token holdings: {{ walletSummary.wallet.tokenAccounts.length }} different tokens
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-xl" *ngIf="isLoading">
+  <div class="text-center">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+    <p>Loading wallet data...</p>
+  </div>
+</div>
+
+<div class="container-xl" *ngIf="error">
+  <div class="alert alert-danger" role="alert">
+    {{ error }}
+  </div>
+</div>
