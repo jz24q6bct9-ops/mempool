@@ -63,7 +63,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let token of walletSummary.wallet.tokenAccounts">
-            <td><code class="addr">{{ token.mint.substring(0, 20) }}...</code></td>
+            <td><code class="addr">{{ truncateAddress(token.mint, 20) }}</code></td>
             <td>{{ token.amount }}</td>
             <td>{{ token.decimals }}</td>
             <td>{{ token.uiAmount || 0 }}</td>
@@ -88,7 +88,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let tx of walletSummary.wallet.transactions" [class]="getStatusClass(tx)">
-            <td><code class="addr">{{ tx.signature.substring(0, 20) }}...</code></td>
+            <td><code class="addr">{{ truncateAddress(tx.signature, 20) }}</code></td>
             <td>{{ formatTimestamp(tx.blockTime) }}</td>
             <td>
               <span *ngIf="!tx.err" class="badge badge-success">Success</span>
@@ -117,10 +117,10 @@
         </thead>
         <tbody>
           <tr *ngFor="let pool of walletSummary.liquidityPools">
-            <td><code class="addr">{{ pool.poolAddress.substring(0, 20) }}...</code></td>
+            <td><code class="addr">{{ truncateAddress(pool.poolAddress, 20) }}</code></td>
             <td>{{ pool.protocol }}</td>
-            <td>{{ pool.tokenA.symbol || pool.tokenA.mint.substring(0, 10) }}...</td>
-            <td>{{ pool.tokenB.symbol || pool.tokenB.mint.substring(0, 10) }}...</td>
+            <td>{{ pool.tokenA.symbol || truncateAddress(pool.tokenA.mint, 10) }}</td>
+            <td>{{ pool.tokenB.symbol || truncateAddress(pool.tokenB.mint, 10) }}</td>
             <td>{{ pool.lpTokenAmount }}</td>
           </tr>
         </tbody>

@@ -8,6 +8,9 @@ import {
   TransactionFees
 } from './solana-api.interface';
 
+// Constants
+const SPL_MEMO_PROGRAM_ID = 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr';
+
 class SolanaApi {
   private rpcUrl: string;
   
@@ -133,7 +136,7 @@ class SolanaApi {
     try {
       const instructions = txDetails.transaction?.message?.instructions || [];
       for (const instruction of instructions) {
-        if (instruction.program === 'spl-memo' || instruction.programId?.toString() === 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr') {
+        if (instruction.program === 'spl-memo' || instruction.programId?.toString() === SPL_MEMO_PROGRAM_ID) {
           return instruction.parsed || instruction.data;
         }
       }
@@ -172,10 +175,12 @@ class SolanaApi {
       try {
         const txDetails = await this.getTransaction(signature);
         if (txDetails && txDetails.meta) {
+          // Use the fee payer from transaction if available, otherwise assume first account is fee payer
+          const feePayer = txDetails.transaction?.message?.accountKeys?.[0]?.pubkey?.toString() || address;
           fees.push({
             signature,
             fee: txDetails.meta.fee / 1e9, // Convert lamports to SOL
-            feePayer: txDetails.transaction.message.accountKeys[0]?.pubkey?.toString() || address,
+            feePayer,
             blockTime: txDetails.blockTime
           });
         }
@@ -188,29 +193,19 @@ class SolanaApi {
   }
 
   /**
-   * Detect liquidity pool positions (simplified - checks for common LP token mints)
-   * This is a basic implementation - full LP detection requires protocol-specific logic
+   * Detect liquidity pool positions
+   * Note: This is a placeholder implementation. Full LP detection requires protocol-specific logic
+   * and integration with DEX APIs (Raydium, Orca, etc.). For production use, consider integrating
+   * with services like Jupiter Aggregator API or protocol-specific SDKs.
    */
   async detectLiquidityPools(address: string): Promise<LiquidityPoolPosition[]> {
-    const tokenAccounts = await this.getTokenAccounts(address);
-    const lpPositions: LiquidityPoolPosition[] = [];
-
-    // Known LP token programs (Raydium, Orca, etc.)
-    // This is simplified - real implementation would query specific pool programs
-    const knownLPPrograms = [
-      'RVKd61ztZW9GUwhRbbLoYVRE5Xf1B2tVscKqwZqXgEr', // Raydium
-      'whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc'  // Orca Whirlpool
-    ];
-
-    // Filter potential LP tokens (this is a placeholder - needs actual pool detection logic)
-    for (const account of tokenAccounts) {
-      if (account.uiAmount && account.uiAmount > 0) {
-        // Placeholder: would need to fetch pool info for each token mint
-        // and determine if it's an LP token
-      }
-    }
-
-    return lpPositions;
+    // Placeholder: Returns empty array until proper implementation
+    // TODO: Implement actual LP detection by:
+    // 1. Querying known LP token mints
+    // 2. Checking token accounts for LP tokens
+    // 3. Fetching pool data from DEX programs
+    // 4. Calculating position values
+    return [];
   }
 
   /**

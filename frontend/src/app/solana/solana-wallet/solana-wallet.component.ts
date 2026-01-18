@@ -51,7 +51,11 @@ export class SolanaWalletComponent implements OnInit {
 
   formatAmount(amount: number | null, decimals: number = 9): string {
     if (amount === null) return '0';
-    return (amount / Math.pow(10, decimals)).toFixed(decimals);
+    const value = amount / Math.pow(10, decimals);
+    // Show at most 4 decimal places for readability
+    if (value === 0) return '0';
+    if (value < 0.0001) return value.toExponential(2);
+    return value.toFixed(Math.min(4, decimals));
   }
 
   getStatusClass(tx: any): string {
@@ -64,5 +68,10 @@ export class SolanaWalletComponent implements OnInit {
     return this.walletSummary.wallet.tokenAccounts.reduce((sum, token) => {
       return sum + (token.uiAmount || 0);
     }, 0);
+  }
+
+  truncateAddress(address: string, prefixLength: number = 20): string {
+    if (!address || address.length <= prefixLength + 3) return address;
+    return address.substring(0, prefixLength) + '...';
   }
 }
