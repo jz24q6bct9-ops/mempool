@@ -33,11 +33,9 @@ export class SolanaWalletService {
       const { solana } = window;
       
       if (solana && solana.isPhantom) {
-        console.log('Phantom wallet found!');
         this.provider = solana;
         
         const response = await solana.connect({ onlyIfTrusted: true });
-        console.log('Connected with Public Key:', response.publicKey.toString());
         
         this.walletAddressSubject.next(response.publicKey.toString());
         this.connectedSubject.next(true);
@@ -45,22 +43,19 @@ export class SolanaWalletService {
         // Listen for account changes
         solana.on('accountChanged', (publicKey: PublicKey | null) => {
           if (publicKey) {
-            console.log('Switched to account:', publicKey.toString());
             this.walletAddressSubject.next(publicKey.toString());
           } else {
-            console.log('Wallet disconnected');
             this.disconnect();
           }
         });
         
         // Listen for disconnection
         solana.on('disconnect', () => {
-          console.log('Wallet disconnected');
           this.disconnect();
         });
       }
     } catch (error) {
-      console.error('Error checking wallet connection:', error);
+      // Silent fail - user hasn't connected before
     }
   }
 
@@ -69,14 +64,12 @@ export class SolanaWalletService {
       const { solana } = window;
       
       if (!solana) {
-        alert('Solana wallet not found! Please install Phantom wallet.');
         window.open('https://phantom.app/', '_blank');
         return null;
       }
       
       this.provider = solana;
       const response = await solana.connect();
-      console.log('Connected with Public Key:', response.publicKey.toString());
       
       const address = response.publicKey.toString();
       this.walletAddressSubject.next(address);
@@ -84,8 +77,7 @@ export class SolanaWalletService {
       
       return address;
     } catch (error) {
-      console.error('Error connecting wallet:', error);
-      return null;
+      throw new Error('Failed to connect wallet');
     }
   }
 
@@ -97,7 +89,7 @@ export class SolanaWalletService {
       this.walletAddressSubject.next(null);
       this.connectedSubject.next(false);
     } catch (error) {
-      console.error('Error disconnecting wallet:', error);
+      throw new Error('Failed to disconnect wallet');
     }
   }
 
@@ -113,16 +105,11 @@ export class SolanaWalletService {
       const signature = Buffer.from(signedMessage.signature).toString('hex');
       const publicKey = signedMessage.publicKey.toString();
       
-      console.log('Message signed successfully');
-      console.log('Signature:', signature);
-      console.log('Public Key:', publicKey);
-      
       return {
         signature,
         publicKey
       };
     } catch (error) {
-      console.error('Error signing message:', error);
       throw error;
     }
   }

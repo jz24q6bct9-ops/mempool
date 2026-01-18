@@ -78,6 +78,11 @@
           <div class="alert alert-success">
             <h6><i class="fa fa-check-circle"></i> Message Signed Successfully!</h6>
             
+            <!-- Copy Success Feedback -->
+            <div *ngIf="copySuccess" class="alert alert-info mt-2 mb-2">
+              <i class="fa fa-check"></i> Copied to clipboard!
+            </div>
+            
             <div class="mt-2">
               <strong>Public Key:</strong>
               <div class="signature-text">

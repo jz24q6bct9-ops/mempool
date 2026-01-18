@@ -15,6 +15,7 @@ export class SolanaWalletComponent implements OnInit, OnDestroy {
   signatureResult: { signature: string; publicKey: string } | null = null;
   isLoading = false;
   errorMessage = '';
+  copySuccess = false;
   
   private subscriptions = new Subscription();
 
@@ -45,10 +46,10 @@ export class SolanaWalletComponent implements OnInit, OnDestroy {
     try {
       const address = await this.solanaWalletService.connectWallet();
       if (!address) {
-        this.errorMessage = 'Failed to connect wallet';
+        this.errorMessage = 'Solana wallet not found. Please install Phantom wallet.';
       }
     } catch (error) {
-      this.errorMessage = 'Error connecting wallet: ' + (error as Error).message;
+      this.errorMessage = 'Failed to connect wallet. Please try again.';
     } finally {
       this.isLoading = false;
     }
@@ -62,7 +63,7 @@ export class SolanaWalletComponent implements OnInit, OnDestroy {
     try {
       await this.solanaWalletService.disconnect();
     } catch (error) {
-      this.errorMessage = 'Error disconnecting wallet: ' + (error as Error).message;
+      this.errorMessage = 'Failed to disconnect wallet. Please try again.';
     } finally {
       this.isLoading = false;
     }
@@ -86,17 +87,21 @@ export class SolanaWalletComponent implements OnInit, OnDestroy {
         this.errorMessage = 'Failed to sign message';
       }
     } catch (error) {
-      this.errorMessage = 'Error signing message: ' + (error as Error).message;
+      this.errorMessage = 'Failed to sign message. Please try again.';
     } finally {
       this.isLoading = false;
     }
   }
 
   copyToClipboard(text: string): void {
+    this.copySuccess = false;
     navigator.clipboard.writeText(text).then(() => {
-      console.log('Copied to clipboard');
-    }).catch(err => {
-      console.error('Failed to copy:', err);
+      this.copySuccess = true;
+      setTimeout(() => {
+        this.copySuccess = false;
+      }, 2000);
+    }).catch(() => {
+      this.errorMessage = 'Failed to copy to clipboard';
     });
   }
 
