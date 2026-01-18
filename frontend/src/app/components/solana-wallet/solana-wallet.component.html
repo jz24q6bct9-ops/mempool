@@ -155,7 +155,7 @@
             </div>
             <div class="mt-2">
               <a 
-                [href]="'https://explorer.solana.com/tx/' + transactionSignature + '?cluster=devnet'" 
+                [href]="getExplorerUrl()" 
                 target="_blank" 
                 class="btn btn-sm btn-info"
                 i18n="@@solana-wallet.view-explorer-button">

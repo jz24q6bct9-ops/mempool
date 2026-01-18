@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, from, throwError } from 'rxjs';
+import { Observable, from, throwError, firstValueFrom } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { Connection, PublicKey, Transaction } from '@solana/web3.js';
 
@@ -39,10 +39,44 @@ export class SolanaService {
   private apiBaseUrl = '';
   private connection: Connection;
   private wallet: any = null;
+  private network: string = 'devnet';
 
   constructor(private httpClient: HttpClient) {
     // Use devnet by default
+    this.network = 'devnet';
     this.connection = new Connection('https://api.devnet.solana.com', 'confirmed');
+  }
+
+  /**
+   * Get current network
+   */
+  getNetwork(): string {
+    return this.network;
+  }
+
+  /**
+   * Set network (mainnet-beta, testnet, devnet)
+   */
+  setNetwork(network: string): void {
+    this.network = network;
+    const rpcUrl = this.getRpcUrl(network);
+    this.connection = new Connection(rpcUrl, 'confirmed');
+  }
+
+  /**
+   * Get RPC URL for network
+   */
+  private getRpcUrl(network: string): string {
+    switch (network) {
+      case 'mainnet':
+      case 'mainnet-beta':
+        return 'https://api.mainnet-beta.solana.com';
+      case 'testnet':
+        return 'https://api.testnet.solana.com';
+      case 'devnet':
+      default:
+        return 'https://api.devnet.solana.com';
+    }
   }
 
   /**
@@ -178,7 +212,7 @@ export class SolanaService {
 
     try {
       // Create transaction using backend API
-      const txResponse = await this.createTransaction(fromPubkey, toPubkey, amount).toPromise();
+      const txResponse = await firstValueFrom(this.createTransaction(fromPubkey, toPubkey, amount));
       
       if (!txResponse) {
         throw new Error('Failed to create transaction');
@@ -191,9 +225,9 @@ export class SolanaService {
       const signedTransaction = await this.wallet.signTransaction(transaction);
 
       // Send to backend
-      const result = await this.sendTransaction(
+      const result = await firstValueFrom(this.sendTransaction(
         signedTransaction.serialize().toString('base64')
-      ).toPromise();
+      ));
 
       if (!result) {
         throw new Error('Failed to send transaction');

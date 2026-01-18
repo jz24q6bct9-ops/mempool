@@ -62,10 +62,10 @@ class SolanaService {
       const messageBytes = new TextEncoder().encode(message);
       const publicKeyBytes = new PublicKey(publicKey).toBytes();
       
-      // Try to decode signature (could be base58 or hex)
+      // Try to decode signature (could be base64 or hex)
       let signatureBytes: Uint8Array;
       try {
-        // Try base58 first
+        // Try base64 first
         signatureBytes = Buffer.from(signature, 'base64');
       } catch {
         // Try hex

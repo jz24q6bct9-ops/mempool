@@ -208,4 +208,10 @@ export class SolanaWalletComponent implements OnInit, OnDestroy {
     this.recipientAddress = '';
     this.transferAmount = 0;
   }
+
+  getExplorerUrl(): string {
+    const network = this.solanaService.getNetwork();
+    const clusterParam = network === 'mainnet-beta' ? '' : `?cluster=${network}`;
+    return `https://explorer.solana.com/tx/${this.transactionSignature}${clusterParam}`;
+  }
 }
