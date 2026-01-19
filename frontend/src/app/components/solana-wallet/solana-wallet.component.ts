@@ -95,6 +95,13 @@ export class SolanaWalletComponent implements OnInit, OnDestroy {
 
   copyToClipboard(text: string): void {
     this.copySuccess = false;
+    
+    // Check if clipboard API is available
+    if (!navigator.clipboard) {
+      this.errorMessage = 'Clipboard access not available. Please use HTTPS.';
+      return;
+    }
+    
     navigator.clipboard.writeText(text).then(() => {
       this.copySuccess = true;
       setTimeout(() => {

@@ -21,10 +21,11 @@ export class SolanaWalletService {
   
   private connection: Connection;
   private provider: any;
+  private readonly RPC_ENDPOINT = 'https://api.mainnet-beta.solana.com';
 
   constructor() {
     // Connect to Solana mainnet by default
-    this.connection = new Connection('https://api.mainnet-beta.solana.com');
+    this.connection = new Connection(this.RPC_ENDPOINT);
     this.checkIfWalletIsConnected();
   }
 
@@ -110,7 +111,10 @@ export class SolanaWalletService {
         publicKey
       };
     } catch (error) {
-      throw error;
+      if (error instanceof Error) {
+        throw new Error(`Failed to sign message: ${error.message}`);
+      }
+      throw new Error('Failed to sign message');
     }
   }
 
