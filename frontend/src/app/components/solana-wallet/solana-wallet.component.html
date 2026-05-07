@@ -1,0 +1,125 @@
+<div class="solana-wallet-container">
+  <div class="card">
+    <div class="card-header">
+      <h4>Solana Wallet</h4>
+    </div>
+    <div class="card-body">
+      <!-- Connection Status -->
+      <div class="connection-status mb-3">
+        <div *ngIf="!isConnected" class="alert alert-info">
+          <i class="fa fa-info-circle"></i> Connect your Solana wallet to sign messages
+        </div>
+        
+        <div *ngIf="isConnected && walletAddress" class="alert alert-success">
+          <i class="fa fa-check-circle"></i> Connected: 
+          <strong>{{ formatAddress(walletAddress) }}</strong>
+          <button 
+            class="btn btn-sm btn-outline-primary ml-2" 
+            (click)="copyToClipboard(walletAddress)"
+            title="Copy address">
+            <i class="fa fa-copy"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        <i class="fa fa-exclamation-triangle"></i> {{ errorMessage }}
+      </div>
+
+      <!-- Connect/Disconnect Button -->
+      <div class="wallet-actions mb-3">
+        <button 
+          *ngIf="!isConnected" 
+          class="btn btn-primary btn-lg btn-block"
+          (click)="connectWallet()"
+          [disabled]="isLoading">
+          <i class="fa fa-wallet"></i>
+          {{ isLoading ? 'Connecting...' : 'Connect Phantom Wallet' }}
+        </button>
+
+        <button 
+          *ngIf="isConnected" 
+          class="btn btn-secondary btn-block"
+          (click)="disconnectWallet()"
+          [disabled]="isLoading">
+          <i class="fa fa-sign-out-alt"></i>
+          {{ isLoading ? 'Disconnecting...' : 'Disconnect Wallet' }}
+        </button>
+      </div>
+
+      <!-- Message Signing Section -->
+      <div *ngIf="isConnected" class="message-signing-section">
+        <hr>
+        <h5 class="mb-3">Sign Message</h5>
+        
+        <div class="form-group">
+          <label for="messageInput">Message to Sign:</label>
+          <textarea 
+            id="messageInput"
+            class="form-control" 
+            rows="3"
+            [(ngModel)]="messageToSign"
+            placeholder="Enter the message you want to sign..."
+            [disabled]="isLoading">
+          </textarea>
+        </div>
+
+        <button 
+          class="btn btn-success btn-block"
+          (click)="signMessage()"
+          [disabled]="isLoading || !messageToSign.trim()">
+          <i class="fa fa-pen"></i>
+          {{ isLoading ? 'Signing...' : 'Sign Message' }}
+        </button>
+
+        <!-- Signature Result -->
+        <div *ngIf="signatureResult" class="signature-result mt-3">
+          <div class="alert alert-success">
+            <h6><i class="fa fa-check-circle"></i> Message Signed Successfully!</h6>
+            
+            <!-- Copy Success Feedback -->
+            <div *ngIf="copySuccess" class="alert alert-info mt-2 mb-2">
+              <i class="fa fa-check"></i> Copied to clipboard!
+            </div>
+            
+            <div class="mt-2">
+              <strong>Public Key:</strong>
+              <div class="signature-text">
+                {{ signatureResult.publicKey }}
+                <button 
+                  class="btn btn-sm btn-outline-primary ml-2" 
+                  (click)="copyToClipboard(signatureResult.publicKey)"
+                  title="Copy public key">
+                  <i class="fa fa-copy"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-2">
+              <strong>Signature:</strong>
+              <div class="signature-text">
+                {{ signatureResult.signature }}
+                <button 
+                  class="btn btn-sm btn-outline-primary ml-2" 
+                  (click)="copyToClipboard(signatureResult.signature)"
+                  title="Copy signature">
+                  <i class="fa fa-copy"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Help Text -->
+      <div class="help-text mt-3">
+        <small class="text-muted">
+          <i class="fa fa-question-circle"></i>
+          This feature allows you to sign messages with your Solana wallet. 
+          Make sure you have Phantom wallet installed in your browser.
+        </small>
+      </div>
+    </div>
+  </div>
+</div>
