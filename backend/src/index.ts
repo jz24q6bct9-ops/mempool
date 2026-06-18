@@ -33,6 +33,7 @@ import miningRoutes from './api/mining/mining-routes';
 import liquidRoutes from './api/liquid/liquid.routes';
 import bitcoinRoutes from './api/bitcoin/bitcoin.routes';
 import servicesRoutes from './api/services/services-routes';
+import solanaRoutes from './api/services/solana-routes';
 import fundingTxFetcher from './tasks/lightning/sync-tasks/funding-tx-fetcher';
 import forensicsService from './tasks/lightning/forensics.service';
 import priceUpdater from './tasks/price-updater';
@@ -368,6 +369,8 @@ class Server {
     if (config.WALLETS.ENABLED) {
       servicesRoutes.initRoutes(this.app);
     }
+    // Solana routes are always enabled
+    solanaRoutes.initRoutes(this.app);
     if (!config.MEMPOOL.OFFICIAL) {
       aboutRoutes.initRoutes(this.app);
     }
